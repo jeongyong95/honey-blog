@@ -1,0 +1,15 @@
+plugins {
+    id 'honey-blog.common-conventions'
+}
+
+jar {
+    enabled = true
+}
+
+bootJar {
+    enabled = false
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+}

@@ -1,0 +1,3 @@
+rootProject.name = 'honey-blog'
+include 'api', 'persistence', 'domain', 'cache'
+
