@@ -1,6 +1,8 @@
 package com.joojeongyong.honey.blog.api.configuration.security.filter;
 
+import com.joojeongyong.honey.blog.api.auth.LoginRequest;
 import com.joojeongyong.honey.blog.api.configuration.security.LoginAuthenticationToken;
+import com.joojeongyong.honey.blog.domain.util.JsonUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -24,12 +26,10 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 	
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
-		// TODO : email, password를 획득한다.
-		var email = "";
-		var password = "";
+		var loginRequest = JsonUtils.read(request.getInputStream(), LoginRequest.class);
 		
 		return getAuthenticationManager().authenticate(
-			LoginAuthenticationToken.unauthenticated(email, password)
+			LoginAuthenticationToken.unauthenticated(loginRequest.getEmail(), loginRequest.getPassword())
 		);
 	}
 	

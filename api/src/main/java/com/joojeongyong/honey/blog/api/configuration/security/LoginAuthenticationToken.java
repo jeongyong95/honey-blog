@@ -1,13 +1,10 @@
 package com.joojeongyong.honey.blog.api.configuration.security;
 
-import lombok.AccessLevel;
-import lombok.Builder;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
-@Builder(access = AccessLevel.PRIVATE)
 public class LoginAuthenticationToken extends AbstractAuthenticationToken {
 	private String email;
 	private String password;
@@ -25,10 +22,13 @@ public class LoginAuthenticationToken extends AbstractAuthenticationToken {
 	}
 	
 	public static LoginAuthenticationToken unauthenticated(String email, String password) {
-		return LoginAuthenticationToken.builder()
-			.email(email)
-			.password(password)
-			.build();
+		return new LoginAuthenticationToken(email, password);
+	}
+	
+	private LoginAuthenticationToken(String email, String password) {
+		super(null);
+		this.email = email;
+		this.password = password;
 	}
 	
 	public static LoginAuthenticationToken authenticated(String email, Collection<? extends GrantedAuthority> authorities) {
