@@ -1,6 +1,7 @@
 package com.joojeongyong.honey.blog.api.configuration.security.filter;
 
 import com.joojeongyong.honey.blog.api.auth.LoginRequest;
+import com.joojeongyong.honey.blog.api.configuration.security.JwtProvider;
 import com.joojeongyong.honey.blog.api.configuration.security.LoginAuthenticationToken;
 import com.joojeongyong.honey.blog.domain.util.JsonUtils;
 import jakarta.servlet.FilterChain;
@@ -20,8 +21,11 @@ import java.io.IOException;
 
 @Slf4j
 public class LoginFilter extends AbstractAuthenticationProcessingFilter {
-	protected LoginFilter(String defaultFilterProcessesUrl, AuthenticationManager authenticationManager) {
+	private final JwtProvider jwtProvider;
+	
+	public LoginFilter(String defaultFilterProcessesUrl, AuthenticationManager authenticationManager, JwtProvider jwtProvider) {
 		super(defaultFilterProcessesUrl, authenticationManager);
+		this.jwtProvider = jwtProvider;
 	}
 	
 	@Override
@@ -35,19 +39,18 @@ public class LoginFilter extends AbstractAuthenticationProcessingFilter {
 	
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-		// TODO : JWT를 발행해서 response에 내려준다.
+		var tokenResponse = jwtProvider.generateTokens(authResult.getName());
 		
 		response.setStatus(HttpStatus.OK.value());
-		response.setHeader(HttpHeaders.AUTHORIZATION, "");
-		response.addCookie(generateRefreshTokenCookie(""));
+		response.setHeader(HttpHeaders.AUTHORIZATION, tokenResponse.accessToken());
+		response.addCookie(generateRefreshTokenCookie(tokenResponse.refreshToken()));
 	}
 	
 	private Cookie generateRefreshTokenCookie(String refreshToken) {
 		var cookie = new Cookie("refresh_token", refreshToken);
 		cookie.setHttpOnly(true);
 		cookie.setSecure(true);
-		cookie.setMaxAge(60 * 30);
-		
+		cookie.setMaxAge(60 * 60 * 24 * 7);
 		return cookie;
 	}
 }

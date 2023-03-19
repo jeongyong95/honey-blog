@@ -1,5 +1,6 @@
 package com.joojeongyong.honey.blog.api.configuration.security;
 
+import com.joojeongyong.honey.blog.api.configuration.security.filter.LoginFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.List;
@@ -26,6 +28,7 @@ public class SecurityConfiguration {
 	private final List<AuthenticationProvider> authenticationProviders;
 	private final CustomUserDetailService userDetailService;
 	private final CustomLogoutHandler logoutHandler;
+	private final JwtProvider jwtProvider;
 	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -38,6 +41,10 @@ public class SecurityConfiguration {
 					.permitAll()
 					.anyRequest()
 					.authenticated()
+			)
+			.addFilterBefore(
+				new LoginFilter("/v1/auth/login", authenticationManager(), jwtProvider),
+				UsernamePasswordAuthenticationFilter.class
 			)
 			.userDetailsService(userDetailService)
 			.logout(customizer ->
