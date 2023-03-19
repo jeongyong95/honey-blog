@@ -1,0 +1,22 @@
+### 로그인
+POST {{baseUrl}}/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "test123"
+}
+
+> {%
+    client.global.set("accessToken", response.headers.valueOf("Authorization"));
+    client.global.set("refreshToken", response.headers.valueOf("Set-Cookie")[0]);
+%}
+
+### 로그아웃
+POST {{baseUrl}}/v1/auth/logout
+Authorization: {{accessToken}}
+Cookie: {{refreshToken}}
+
+> {%
+    client.global.set("refreshToken", response.headers.valueOf("Set-Cookie")[0]);
+%}

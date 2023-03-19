@@ -2,7 +2,9 @@ package com.joojeongyong.honey.blog.api.configuration.security;
 
 import com.joojeongyong.honey.blog.api.auth.TokenResponse;
 import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -60,5 +62,22 @@ public class JwtProvider {
 			.setIssuedAt(Timestamp.valueOf(issuedAt))
 			.setAudience(audience)
 			.setIssuer(applicationName);
+	}
+	
+	public String getAudience(String accessToken) {
+		if (accessToken == null) {
+			throw new JwtException("토큰이 없습니다.");
+		}
+		if (!accessToken.startsWith("Bearer ")) {
+			throw new MalformedJwtException("Bearer 토큰이 아닙니다.");
+		}
+		return Jwts.parserBuilder()
+			.setSigningKey(secretKey)
+			.requireIssuer(applicationName)
+			.requireSubject("access_token")
+			.build()
+			.parseClaimsJws(accessToken.substring(7))
+			.getBody()
+			.getAudience();
 	}
 }

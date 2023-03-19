@@ -1,0 +1,10 @@
+### 계정 생성
+POST {{baseUrl}}/v1/users
+Content-Type: application/json
+
+{
+  "name": "테스터",
+  "email": "test@test.com",
+  "password": "test123",
+  "roleCode": "ROLE_ADMIN"
+}

@@ -14,6 +14,16 @@ public class UserEntity {
 	private Role roleCode;
 	private UserStatus status;
 	
+	public static UserEntity createActiveUser(String name, String email, String password, Role roleCode) {
+		return UserEntity.builder()
+			.name(name)
+			.email(email)
+			.password(password)
+			.roleCode(roleCode)
+			.status(UserStatus.ACTIVE)
+			.build();
+	}
+	
 	public static UserEntity of(
 		Long userId, String name, String email, String password, Role roleCode, UserStatus status
 	) {

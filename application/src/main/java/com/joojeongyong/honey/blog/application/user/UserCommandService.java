@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class UserCommandService {
-	private UserCommandRepository userCommandRepository;
+	private final UserCommandRepository userCommandRepository;
 	
 	public UserEntity addUser(UserEntity userEntity) {
 		return userCommandRepository.addUser(userEntity);
