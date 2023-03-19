@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -15,8 +17,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -63,6 +68,19 @@ public class SecurityConfiguration {
 	
 	@Bean
 	protected CorsConfigurationSource corsConfigurationSource() {
-		return null;
+		var configuration = new CorsConfiguration();
+		configuration.setAllowedMethods(Arrays.asList(
+			HttpMethod.OPTIONS.name(),
+			HttpMethod.GET.name(), HttpMethod.POST.name(),
+			HttpMethod.PUT.name(), HttpMethod.DELETE.name()
+		));
+		configuration.setAllowedOrigins(List.of(
+			"http://localhost:3000"
+		));
+		configuration.addExposedHeader(HttpHeaders.AUTHORIZATION);
+		
+		var configurationSource = new UrlBasedCorsConfigurationSource();
+		configurationSource.registerCorsConfiguration("/**", configuration);
+		return configurationSource;
 	}
 }
