@@ -1,8 +1,9 @@
 package com.joojeongyong.honey.blog.api.configuration.security;
 
-import com.joojeongyong.honey.blog.api.configuration.security.filter.CookieLogFilter;
 import com.joojeongyong.honey.blog.api.configuration.security.filter.JwtAuthenticationFilter;
 import com.joojeongyong.honey.blog.api.configuration.security.filter.LoginFilter;
+import java.util.Arrays;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -20,13 +21,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -49,7 +46,7 @@ public class SecurityConfiguration {
 				customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			)
 			.authorizeHttpRequests(customizer ->
-				customizer.requestMatchers("/actuator/**",
+				customizer.requestMatchers("/actuator/**", "/swagger*/**", "/v3/api-docs*/**",
 						"/", "/hello", "/v1/auth/login", "/v1/users"
 					)
 					.permitAll()
@@ -61,7 +58,6 @@ public class SecurityConfiguration {
 				UsernamePasswordAuthenticationFilter.class
 			)
 			.addFilterBefore(new JwtAuthenticationFilter(jwtProvider, userDetailService), LoginFilter.class)
-			.addFilterBefore(new CookieLogFilter(), LogoutFilter.class)
 			.logout(customizer ->
 				customizer.logoutUrl("/v1/auth/logout")
 					.addLogoutHandler(logoutHandler)
