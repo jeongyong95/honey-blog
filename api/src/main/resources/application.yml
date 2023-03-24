@@ -15,4 +15,4 @@ spring:
         format_sql: true
 
 springdoc:
-  show-actuator: true
+  show-actuator: false
