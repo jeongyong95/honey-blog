@@ -8,3 +8,7 @@ Content-Type: application/json
   "password": "test123",
   "roleCode": "ROLE_ADMIN"
 }
+
+### 계정 상세조회
+GET {{baseUrl}}/v1/users/2
+Authorization: {{accessToken}}
